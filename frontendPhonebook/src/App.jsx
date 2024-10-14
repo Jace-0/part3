@@ -44,7 +44,7 @@ const Notification = ({ message }) => {
   if (message === null) {
     return null
   }
-  const isError = message.includes('has already been removed from the server')
+  const isError = message.includes('Person validation failed')
   const className = `notif ${isError ? 'error' : 'success'}`
 
   return (
@@ -69,7 +69,6 @@ const App = () => {
       })
   }, [])
 
-  // console.log('render', persons.length, 'notes')
 
   // add persons
   const addPerson = (event) => {
@@ -88,7 +87,7 @@ const App = () => {
         phoneService
           .update(person.id, newPersonObject)
           .then(returnedObject => {
-            console.log('Returned object:', returnedObject)
+            // console.log('Returned object:', returnedObject)
             setPersons(persons.map(p => p.id !== person.id ? p : returnedObject ))
             setNewName('')
             setNewNumber('')
@@ -103,15 +102,14 @@ const App = () => {
 
           })
           .catch(error => {
-            console.log('failed to update', error)
+            // console.log('failed to update', error)
             // set notification
-
-            setNotification(`Information of ${newName} has already been removed from the server`)
+            setNotification(error.response.data.error)
             
             //  set timeout
             setTimeout(() => {
               setNotification(null)
-            }, 5000)
+            }, 50000)
 
           }) 
       }
@@ -136,8 +134,8 @@ const App = () => {
         })
         
         .catch(error =>{
-          console.log('failed to create', error)
-          setNotification(`Failed to add ${newName}`)
+          // console.log('failed to create', error)
+          setNotification(error.response.data.error)
           setTimeout(() => {
             setNotification(null)
           }, 500)
